@@ -185,6 +185,8 @@ client.on("message",async message =>{
         const tagList = await Tags.findAll({
             where :{guildId: message.guild.id}
         });
+
+        if(!tagList.length) return message.reply(`no summoners are currently stored! use \"!add [region] [summonername]\" to add a summoner`);
     
         for(let i = 0; i < tagList.length; i++){
             leaderboard.push([tagList[i].summonerName, tagList[i].rank, tagList[i].league, tagList[i].lp]);
