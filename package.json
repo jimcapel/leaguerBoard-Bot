@@ -9,10 +9,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.21.1",
     "cheerio": "^1.0.0-rc.5",
     "discord.js": "^12.5.1",
     "mysql2": "^2.2.5",
+    "node-fetch": "^2.6.1",
     "sequelize": "^6.5.0",
     "sqlite3": "^5.0.2"
   }

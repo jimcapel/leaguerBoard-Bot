@@ -7,8 +7,9 @@ const regionChange = (region) =>{
     if(region == "lan") return "las1";
 
     if(region == "las") return "la2";
-
+    
     return region;
+    
     
 }
 

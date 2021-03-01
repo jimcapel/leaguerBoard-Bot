@@ -5,39 +5,39 @@ const rankCalculator = (league, division, lp) =>{
 
 
     switch(league){
-        case "Iron":
+        case "IRON":
             leagueIdentifier = "1";
             break;
         
-        case "Bronze":
+        case "BRONZE":
             leagueIdentifier = "2";
             break;
         
-        case "Silver":
+        case "SILVER":
             leagueIdentifier = "3";
             break;
 
-        case "Gold":
+        case "GOLD":
             leagueIdentifier = "4";
             break;
         
-        case "Platinum":
+        case "PLATINUM":
             leagueIdentifier = "5";
             break;
         
-        case "Diamond":
+        case "DIAMOND":
             leagueIdentifier = "6";
             break;
         
-        case "Master":
+        case "MASTER":
             leagueIdentifier = "7";
             break;
         
-        case "Grandmaster":
+        case "GRANDMASTER":
             leagueIdentifier = "8";
             break;
         
-        case "Challenger":
+        case "CHALLENGER":
             leagueIdentifier = "9";
             break
         
@@ -47,16 +47,16 @@ const rankCalculator = (league, division, lp) =>{
     }
 
     switch(division){
-        case "1":
+        case "I":
             divisionIdentifier = "4";
             break;
-        case "2":
+        case "II":
             divisionIdentifier = "3";
             break;
-        case "3":
+        case "III":
             divisionIdentifier = "2";
             break;
-        case "4":
+        case "IV":
             divisionIdentifier = "1";
             break;
     }
@@ -64,9 +64,8 @@ const rankCalculator = (league, division, lp) =>{
     let noLp = leagueIdentifier + divisionIdentifier + "000";
 
     let noLpInt = parseInt(noLp, 10);
-    let lpInt = parseInt(lp, 10);
 
-    let rank = noLpInt + lpInt;
+    let rank = noLpInt + lp;
 
     return rank
 

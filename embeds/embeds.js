@@ -1,5 +1,6 @@
 const discord = require("discord.js");
 
+/*
 const embedMessage = (toSend) => {
 
     const embed = new discord.MessageEmbed()
@@ -16,12 +17,12 @@ const embedRank = (username, rank, lp) =>{
     return embed;
 
 }
-
+*/
 const embedRanks = (channelName, members) =>{
     let toSend = "";
     for(let i = 0; i < members.length; i++){
         let x = i + 1;
-        toSend += x.toString(10) + ": " +  members[i][0] + " " + members[i][2] + " " + members[i][3] + " LP\n";
+        toSend += x.toString(10) + ": " +  members[i][0] + " " + members[i][2] + " " + members[i][3] + " " + members[i][4] + " LP\n";
 
     }
 
@@ -32,6 +33,6 @@ const embedRanks = (channelName, members) =>{
     return embed;
 }
 
-exports.embedMessage = embedMessage;
-exports.embedRank = embedRank;
+//exports.embedMessage = embedMessage;
+//exports.embedRank = embedRank;
 exports.embedRanks = embedRanks;
