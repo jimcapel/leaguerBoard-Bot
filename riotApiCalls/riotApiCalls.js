@@ -1,5 +1,5 @@
 const fetch = require("node-fetch");
-const key = "RGAPI-c79cd7e6-3efc-4a54-b653-9e7c9a7e6e16"; //process.env.RIOT_API_KEY
+const key = process.env.RIOT_API_KEY;
 
 const getSummoner = async (summonername, region) => {
 

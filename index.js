@@ -44,7 +44,7 @@ const Tags = sequelize.define("tags", {
 })
 
 client.once("ready", () =>{
-    Tags.sync({force: true}); //{ force: true }
+    Tags.sync(); //{ force: true }
     console.log("leagueBot online")
 })
 
