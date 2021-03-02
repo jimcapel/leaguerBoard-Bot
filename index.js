@@ -99,7 +99,7 @@ client.on("message",async message =>{
 
                 await Tags.update({tier: soloQueue.tier, rank: soloQueue.rank, lp: soloQueue.leaguePoints}, {where: {username: message.author.username, guildId: message.guild.id}});
                 
-                return message.reply(`${tag.summonerName}: ${tag.tier} ${tag.rank} ${tag.lp} LP`);
+                return message.reply(`${tag.summonerName}: ${soloQueue.tier} ${soloQueue.rank} ${soloQueue.leaguePoints} LP`);
 
 
 
