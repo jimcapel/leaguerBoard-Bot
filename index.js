@@ -1,6 +1,5 @@
 const discord = require("discord.js");
 const Sequelize = require("sequelize");
-const
 
 //imports
 const rankCalculator = require("./args/rankCalculator");
