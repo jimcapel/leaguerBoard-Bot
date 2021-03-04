@@ -1,6 +1,8 @@
 const discord = require("discord.js");
 const Sequelize = require("sequelize");
 
+//store summonerid!
+
 //imports
 const rankCalculator = require("./args/rankCalculator");
 const regionChange = require("./args/regionChange");
@@ -138,7 +140,7 @@ client.on("message",async message =>{
 
         if(args.length != 2) return message.reply(`use \"!add [region] [summonername]\" to bind your account!`);
 
-        let tag = await Tags.findOne({where: { summonerName: `${args[1]}`}, guildId: message.guild.id});
+        let tag = await Tags.findOne({where: { summonerName: `${args[1]}`, guildId: message.guild.id});
 
         if(tag) return message.reply(`summoner ${args[1]} is already bound! please choose another summoner`);
 
