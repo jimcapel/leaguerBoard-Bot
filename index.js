@@ -99,7 +99,9 @@ client.on("message",async message =>{
         
                 }
 
-                await Tags.update({tier: soloQueue.tier, rank: soloQueue.rank, lp: soloQueue.leaguePoints}, {where: {username: message.author.username, guildId: message.guild.id}});
+                let rankInt = rankCalculator.rankCalculator(soloQueue.tier, soloQueue.rank, soloQueue.leaguePoints);
+
+                await Tags.update({tier: soloQueue.tier, rankInt: rankInt, lp: soloQueue.leaguePoints, rank: soloQueue.rank}, {where: {username: message.author.username, guildId: message.guild.id}});
                 
                 return message.reply(`${tag.summonerName}: ${soloQueue.tier} ${soloQueue.rank} ${soloQueue.leaguePoints} LP`);
 
@@ -146,7 +148,7 @@ client.on("message",async message =>{
 
         let row = await Tags.findOne({where : {username: message.author.username, guildId: message.guild.id}});
 
-        if(row) return message.reply("a summonername is already bound, use \"!remove\" to delete current bind");
+        //if(row) return message.reply("a summonername is already bound, use \"!remove\" to delete current bind");
 
         let summonerInfo= await RiotAPICalls.getSummoner(args[1], args[0]);
 
@@ -208,9 +210,13 @@ client.on("message",async message =>{
             leaderboard.push([tagList[i].summonerName, tagList[i].rankInt, tagList[i].tier, tagList[i].rank, tagList[i].lp]);
         };
 
+        console.log(leaderboard);
+
         let sorted = leaderboard.sort(function(a, b) {
             return b[1] - a[1];
           })
+
+        console.log(sorted);
 
         return message.channel.send(embeds.embedRanks(message.guild.name, sorted));
     }
