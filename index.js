@@ -12,7 +12,7 @@ const RiotAPICalls = require("./riotApiCalls/riotApiCalls");
 const client = new discord.Client();
 
 //define sqllite model for testing
-
+/*
 const sequelize = new Sequelize("database", "username", "password", {
     host: 'localhost',
 	dialect: 'sqlite',
@@ -20,7 +20,7 @@ const sequelize = new Sequelize("database", "username", "password", {
 	// SQLite only
 	storage: 'database.sqlite',
 });
-
+*/
 
 
 
