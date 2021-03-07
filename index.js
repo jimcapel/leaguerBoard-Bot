@@ -150,7 +150,7 @@ client.on("message",async message =>{
 
         let row = await Tags.findOne({where : {username: message.author.username, guildId: message.guild.id}});
 
-        //if(row) return message.reply("a summonername is already bound, use \"!remove\" to delete current bind");
+        if(row) return message.reply("a summonername is already bound, use \"!remove\" to delete current bind");
 
         let [summonerInfo, encryptedSummonerId] = await RiotAPICalls.getSummonerByName(args[1], args[0]);
 
