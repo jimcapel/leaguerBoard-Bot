@@ -12,7 +12,7 @@ const RiotAPICalls = require("./riotApiCalls/riotApiCalls");
 const client = new discord.Client();
 
 //define sqllite model for testing
-/*
+
 const sequelize = new Sequelize("database", "username", "password", {
     host: 'localhost',
 	dialect: 'sqlite',
@@ -20,12 +20,13 @@ const sequelize = new Sequelize("database", "username", "password", {
 	// SQLite only
 	storage: 'database.sqlite',
 });
-*/
 
 
+/*
 const sequelize = new Sequelize(process.env.CLEARDB_DATABASE_URL, {
     logging: false
 });
+*/
 
 
 const Tags = sequelize.define("tags", {
@@ -41,12 +42,16 @@ const Tags = sequelize.define("tags", {
     tier: Sequelize.STRING,
     rank: Sequelize.STRING,
     lp: Sequelize.STRING,
+    encryptedSummonerId: Sequelize.STRING,
+    wins: Sequelize.INTEGER,
+    losses: Sequelize.INTEGER,
+
     
 
 })
 
 client.once("ready", () =>{
-    Tags.sync(); //{ force: true }
+    Tags.sync({force: true}); //{ force: true }
     console.log("leagueBot online")
 })
 
@@ -84,19 +89,17 @@ client.on("message",async message =>{
     if (command == "rank"){
 
         if(!args.length){
-            const tag = await Tags.findOne({where: { username: `${message.author.username}`} });
+            const tag = await Tags.findOne({where: { username: `${message.author.username}`, guildId: message.guild.id} });
             if(tag){
                 
-                let summonerInfo = await RiotAPICalls.getSummoner(tag.summonerName, tag.server);
+                let summonerInfo = await RiotAPICalls.getSummonerById(tag.encryptedSummonerId, tag.server);
 
                 let soloQueue;
 
-                for(let i = 0; i < summonerInfo.length; i++){
-
-                    if(summonerInfo[i].queueType == "RANKED_SOLO_5x5"){
-                        soloQueue = summonerInfo[i];
-                    }
-        
+                if(summonerInfo[0].queueType == "RANKED_SOLO_5x5"){
+                    soloQueue = summonerInfo[0];
+                }else{
+                    soloQueue = summonerInfo[1];
                 }
 
                 let rankInt = rankCalculator.rankCalculator(soloQueue.tier, soloQueue.rank, soloQueue.leaguePoints);
@@ -115,18 +118,16 @@ client.on("message",async message =>{
         
         else if(args.length == 2){
 
-            let summonerInfo = await RiotAPICalls.getSummoner(args[1], args[0]);
+            let summonerInfo = await RiotAPICalls.returnRank(args[1], args[0]);
 
             if(summonerInfo == -1) return message.reply(`${args[1]} in region ${args[0]} not found!`);
 
             let soloQueue;
 
-            for(let i = 0; i < summonerInfo.length; i++){
-
-                if(summonerInfo[i].queueType == "RANKED_SOLO_5x5"){
-                    soloQueue = summonerInfo[i];
-                }
-    
+            if(summonerInfo[0].queueType == "RANKED_SOLO_5x5"){
+                soloQueue = summonerInfo[0];
+            }else{
+                soloQueue = summonerInfo[1];
             }
 
             if(soloQueue) return message.reply(`${soloQueue.summonerName} is currently: ${soloQueue.tier} ${soloQueue.rank} ${soloQueue.leaguePoints} LP`);
@@ -150,25 +151,21 @@ client.on("message",async message =>{
 
         //if(row) return message.reply("a summonername is already bound, use \"!remove\" to delete current bind");
 
-        let summonerInfo= await RiotAPICalls.getSummoner(args[1], args[0]);
+        let [summonerInfo, encryptedSummonerId] = await RiotAPICalls.getSummonerByName(args[1], args[0]);
 
         if(summonerInfo == -1) return message.reply(`${args[1]} in region ${args[0]} not found!`);
-        console.log(summonerInfo);
 
         let soloQueue;
 
-        for(let i = 0; i < summonerInfo.length; i++){
-
-            if(summonerInfo[i].queueType == "RANKED_SOLO_5x5"){
-                soloQueue = summonerInfo[i];
-            }
-
+        if(summonerInfo[0].queueType == "RANKED_SOLO_5x5"){
+            soloQueue = summonerInfo[0];
+        }else{
+            soloQueue = summonerInfo[1];
         }
 
         if(soloQueue){
 
-            let rankInt = rankCalculator.rankCalculator(soloQueue.tier, soloQueue.rank, soloQueue.leaguePoints);
-            
+            let rankInt = rankCalculator.rankCalculator(soloQueue.tier, soloQueue.rank, soloQueue.leaguePoints);            
 
             try {
                 const tag = await Tags.create({
@@ -180,6 +177,9 @@ client.on("message",async message =>{
                     tier: soloQueue.tier,
                     rank: soloQueue.rank,
                     lp: soloQueue.leaguePoints,
+                    encryptedSummonerId: encryptedSummonerId,
+                    wins: soloQueue.wins,
+                    losses: soloQueue.losses,
 
 
                 });
@@ -205,18 +205,33 @@ client.on("message",async message =>{
         });
 
         if(!tagList.length) return message.reply(`no summoners are currently stored! use \"!add [region] [summonername]\" to add a summoner`);
+
+        for(let i = 0; i < tagList.length; i++){
+
+            let summonerInfo = await RiotAPICalls.getSummonerById(tagList[i].encryptedSummonerId, tagList[i].server);
+
+            let soloQueue;
+
+            if(summonerInfo[0].queueType == "RANKED_SOLO_5x5"){
+                soloQueue = summonerInfo[0];
+            }else{
+                soloQueue = summonerInfo[1];
+            }
+
+            let rankInt = rankCalculator.rankCalculator(soloQueue.tier, soloQueue.rank, soloQueue.leaguePoints);
+
+            await Tags.update({tier: soloQueue.tier, rankInt: rankInt, lp: soloQueue.leaguePoints, rank: soloQueue.rank}, {where: {username: message.author.username, guildId: message.guild.id}});
+                
+        }
     
         for(let i = 0; i < tagList.length; i++){
-            leaderboard.push([tagList[i].summonerName, tagList[i].rankInt, tagList[i].tier, tagList[i].rank, tagList[i].lp]);
+            let rankInt = rankCalculator.rankCalculator(tagList[i].tier, tagList[i].rank, tagList[i].leaguePoints);
+            leaderboard.push([tagList[i].summonerName, rankInt, tagList[i].tier, tagList[i].rank, tagList[i].lp]);
         };
-
-        console.log(leaderboard);
 
         let sorted = leaderboard.sort(function(a, b) {
             return b[1] - a[1];
           })
-
-        console.log(sorted);
 
         return message.channel.send(embeds.embedRanks(message.guild.name, sorted));
     }
@@ -230,13 +245,12 @@ client.on("message",async message =>{
         return message.reply(`remove succseful!`);
         
     }
-
     
 });
 
 
 
 
-client.login(process.env.BOT_KEY);//process.env.BOT_KEY
+client.login("ODEzMzUyNzY4OTg3MjAxNTQ4.YDODyw.fYR6fcGFGm-2_FvWGfUlJRaGVNI");//process.env.BOT_KEY
 
 
