@@ -12,7 +12,7 @@ const RiotAPICalls = require("./riotApiCalls/riotApiCalls");
 const client = new discord.Client();
 
 //define sqllite model for testing
-
+/*
 const sequelize = new Sequelize("database", "username", "password", {
     host: 'localhost',
 	dialect: 'sqlite',
@@ -20,13 +20,14 @@ const sequelize = new Sequelize("database", "username", "password", {
 	// SQLite only
 	storage: 'database.sqlite',
 });
+*/
 
 
-/*
+
 const sequelize = new Sequelize(process.env.CLEARDB_DATABASE_URL, {
     logging: false
 });
-*/
+
 
 
 const Tags = sequelize.define("tags", {
@@ -251,6 +252,6 @@ client.on("message",async message =>{
 
 
 
-client.login("ODEzMzUyNzY4OTg3MjAxNTQ4.YDODyw.fYR6fcGFGm-2_FvWGfUlJRaGVNI");//process.env.BOT_KEY
+client.login(process.env.BOT_KEY);//process.env.BOT_KEY
 
 
