@@ -12,7 +12,7 @@ const RiotAPICalls = require("./riotApiCalls/riotApiCalls");
 const client = new discord.Client();
 
 //define sqllite model for testing
-/*
+
 const sequelize = new Sequelize("database", "username", "password", {
     host: 'localhost',
 	dialect: 'sqlite',
@@ -20,7 +20,7 @@ const sequelize = new Sequelize("database", "username", "password", {
 	// SQLite only
 	storage: 'database.sqlite',
 });
-*/
+
 
 
 
@@ -42,7 +42,7 @@ const Tags = sequelize.define("tags", {
     rankInt: Sequelize.INTEGER,
     tier: Sequelize.STRING,
     rank: Sequelize.STRING,
-    lp: Sequelize.STRING,
+    leaguePoints: Sequelize.STRING,
     encryptedSummonerId: Sequelize.STRING,
     wins: Sequelize.INTEGER,
     losses: Sequelize.INTEGER,
@@ -104,8 +104,8 @@ client.on("message",async message =>{
                 }
 
                 let rankInt = rankCalculator.rankCalculator(soloQueue.tier, soloQueue.rank, soloQueue.leaguePoints);
-
-                await Tags.update({tier: soloQueue.tier, rankInt: rankInt, lp: soloQueue.leaguePoints, rank: soloQueue.rank}, {where: {username: message.author.username, guildId: message.guild.id}});
+                
+                await Tags.update({tier: soloQueue.tier, rankInt: rankInt, leaguePoints: soloQueue.leaguePoints, rank: soloQueue.rank}, {where: {username: message.author.username, guildId: message.guild.id}});
                 
                 return message.reply(`${tag.summonerName}: ${soloQueue.tier} ${soloQueue.rank} ${soloQueue.leaguePoints} LP`);
 
@@ -167,7 +167,6 @@ client.on("message",async message =>{
         if(soloQueue){
 
             let rankInt = rankCalculator.rankCalculator(soloQueue.tier, soloQueue.rank, soloQueue.leaguePoints);            
-
             try {
                 const tag = await Tags.create({
                     guildId: message.guild.id,
@@ -177,7 +176,7 @@ client.on("message",async message =>{
                     rankInt: rankInt,
                     tier: soloQueue.tier,
                     rank: soloQueue.rank,
-                    lp: soloQueue.leaguePoints,
+                    leaguePoints: soloQueue.leaguePoints,
                     encryptedSummonerId: encryptedSummonerId,
                     wins: soloQueue.wins,
                     losses: soloQueue.losses,
@@ -220,20 +219,19 @@ client.on("message",async message =>{
             }
 
             let rankInt = rankCalculator.rankCalculator(soloQueue.tier, soloQueue.rank, soloQueue.leaguePoints);
-
-            await Tags.update({tier: soloQueue.tier, rankInt: rankInt, lp: soloQueue.leaguePoints, rank: soloQueue.rank}, {where: {username: message.author.username, guildId: message.guild.id}});
+            await Tags.update({tier: soloQueue.tier, rankInt: rankInt, leaguePoints: soloQueue.leaguePoints, rank: soloQueue.rank}, {where: {summonerName: tagList[i].summonerName, guildId: message.guild.id}});
                 
         }
     
         for(let i = 0; i < tagList.length; i++){
             let rankInt = rankCalculator.rankCalculator(tagList[i].tier, tagList[i].rank, tagList[i].leaguePoints);
-            leaderboard.push([tagList[i].summonerName, rankInt, tagList[i].tier, tagList[i].rank, tagList[i].lp]);
+            leaderboard.push([tagList[i].summonerName, rankInt, tagList[i].tier, tagList[i].rank, tagList[i].leaguePoints]);
         };
 
         let sorted = leaderboard.sort(function(a, b) {
             return b[1] - a[1];
           })
-
+        
         return message.channel.send(embeds.embedRanks(message.guild.name, sorted));
     }
 

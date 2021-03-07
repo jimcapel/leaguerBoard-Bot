@@ -62,7 +62,6 @@ const rankCalculator = (league, division, lp) =>{
     }
 
     let noLp = leagueIdentifier + divisionIdentifier + "000";
-
     let noLpInt = parseInt(noLp, 10);
     let rank = noLpInt + lp;
     
