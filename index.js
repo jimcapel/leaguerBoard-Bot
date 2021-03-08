@@ -52,7 +52,7 @@ const Tags = sequelize.define("tags", {
 })
 
 client.once("ready", () =>{
-    Tags.sync({force: true}); //{ force: true }
+    Tags.sync(); //{ force: true }
     console.log("leagueBot online")
 })
 
@@ -197,7 +197,7 @@ client.on("message",async message =>{
     }
 
     if(command == "ranks"){
-        
+
         let leaderboard = [];
 
         const tagList = await Tags.findAll({
@@ -219,14 +219,10 @@ client.on("message",async message =>{
             }
 
             let rankInt = rankCalculator.rankCalculator(soloQueue.tier, soloQueue.rank, soloQueue.leaguePoints);
+            leaderboard.push([soloQueue.summonerName, rankInt, soloQueue.tier, soloQueue.rank,soloQueue.leaguePoints]);
             await Tags.update({tier: soloQueue.tier, rankInt: rankInt, leaguePoints: soloQueue.leaguePoints, rank: soloQueue.rank}, {where: {summonerName: tagList[i].summonerName, guildId: message.guild.id}});
                 
         }
-    
-        for(let i = 0; i < tagList.length; i++){
-            let rankInt = rankCalculator.rankCalculator(tagList[i].tier, tagList[i].rank, tagList[i].leaguePoints);
-            leaderboard.push([tagList[i].summonerName, rankInt, tagList[i].tier, tagList[i].rank, tagList[i].leaguePoints]);
-        };
 
         let sorted = leaderboard.sort(function(a, b) {
             return b[1] - a[1];
