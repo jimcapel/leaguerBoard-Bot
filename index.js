@@ -293,18 +293,6 @@ client.on("message", async (message) => {
     return message.reply(`remove succseful!`);
   }
 
-  if(command == "test"){
-    const embed = new discord.MessageEmbed()
-        .setTitle("RANK LEADERBOARD")
-        .addFields(
-            {name: "#", value: "1\n2\n3", inline: true},
-            {name:"Summoner Name", value: "james\nnathan\njoe", inline: true},
-            {name: "Rank", value: "chall\nchall\nwood", inline: true},
-        )
-        
-
-    return message.channel.send(embed);
-  }
 });
 
 client.login(process.env.BOT_KEY); //process.env.BOT_KEY
