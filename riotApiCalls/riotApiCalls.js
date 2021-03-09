@@ -1,5 +1,5 @@
 const fetch = require("node-fetch");
-const key = [process.env.RIOT_API_KEY];//process.env.RIOT_API_KEY;
+const key = process.env.RIOT_API_KEY;//process.env.RIOT_API_KEY;
 
 const getSummonerByName = async (summonername, region) => {
 

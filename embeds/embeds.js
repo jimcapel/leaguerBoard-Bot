@@ -1,38 +1,38 @@
 const discord = require("discord.js");
 
-/*
-const embedMessage = (toSend) => {
+const embedRanks = (channelName, members) => {
+    
+    let index = "";
+    let summonerNames = "";
+    let ranks = "";
 
-    const embed = new discord.MessageEmbed()
-    .setDescription(toSend)
-
-    return embed
-}
-
-const embedRank = (username, rank, lp) =>{
-
-    const embed = new discord.MessageEmbed()
-    .setDescription(`${username}'s Rank is: \n${rank} ${lp} LP`);
-
-    return embed;
-
-}
-*/
-const embedRanks = (channelName, members) =>{
-    let toSend = "";
     for(let i = 0; i < members.length; i++){
+        
         let x = i + 1;
-        toSend += x.toString(10) + ": " +  members[i][0] + " " + members[i][2] + " " + members[i][3] + " " + members[i][4] + " LP\n";
+        
+        if(i == members.length - 1){
+            index += x.toString(10);
+            summonerNames += members[i][0];
+            ranks += members[i][2] + " " + members[i][3] + " " + members[i][4] + " LP"
+            break
+        }
+        
+
+        index += x.toString(10) + "\n";
+        summonerNames += members[i][0] + "\n";
+        ranks += members[i][2] + " " + members[i][3] + " " + members[i][4] + " LP\n";
 
     }
-
     const embed = new discord.MessageEmbed()
-    .setTitle(`${channelName} Ranked Leaderbaord!`)
-    .setDescription(toSend)
+        .setTitle(`${channelName} Ranked Leaderbaord!`)
+        .addFields(
+            {name: "#", value: index, inline: true},
+            {name:"Summoner Name:", value: summonerNames, inline: true},
+            {name: "Rank:", value: ranks, inline: true},
+        )
 
     return embed;
+
 }
 
-//exports.embedMessage = embedMessage;
-//exports.embedRank = embedRank;
 exports.embedRanks = embedRanks;
