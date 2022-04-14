@@ -15,3 +15,5 @@ Commands:
 !rank - display current rank of summoner bound to account (bind with !add). 
 
 !ranks - displays a leaderboard of ranks of all summoners currently bound to accounts on the server.
+
+***hosted on heroku***
